@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "754086183515",
+    "firebase_url": "https://testaplikacjiscanner.firebaseio.com",
+    "project_id": "testaplikacjiscanner",
+    "storage_bucket": "testaplikacjiscanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754086183515:android:d2823aced34f1ed9eef57e",
+        "android_client_info": {
+          "package_name": "com.firstrealapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "754086183515-ka581dbebqdou1hq0aeoit3akhrsjnga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5GgJA7P6DNtHPOjxIUbqcqaDcAD3sLzM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "754086183515-ka581dbebqdou1hq0aeoit3akhrsjnga.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
