@@ -7,27 +7,27 @@ const TestStorage = () => {
   const [textFromStorage, setTextFromStorage] = useState('');
   const [callUseEffect, setCallUseEffect] = useState('');
 
-  useEffect(() => {
-    console.log('sasasas');
-    setTextFromStorage(JSON.stringify(AsyncStorage.getItem('name')));
+  const _retrieveData = async () => {
     try {
-      const value = AsyncStorage.getItem('TASKS');
+      const value = await AsyncStorage.getItem('name');
       if (value !== null) {
-        // We have data!!
-        console.log(value);
+        setTextFromStorage(value);
       }
     } catch (error) {
       // Error retrieving data
     }
+  };
+
+  useEffect(() => {
+    _retrieveData();
   }, [callUseEffect]);
 
   const onChangeTextStorage = () => {
     console.log('lol');
     try {
       setCallUseEffect(text);
-      console.log(`${callUseEffect}-tu`);
+
       AsyncStorage.setItem('name', text);
-      console.log(AsyncStorage.getItem('name'));
     } catch (error) {
       // Error saving data
     }
@@ -38,6 +38,7 @@ const TestStorage = () => {
       <TextInput
         multiline={true}
         numberOfLines={4}
+        // eslint-disable-next-line no-shadow
         onChangeText={(text) => setText(text)}
         value={text}
       />

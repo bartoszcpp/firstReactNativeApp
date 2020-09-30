@@ -1,13 +1,15 @@
-import React, {useState} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {AsyncStorage, Button, StyleSheet, Text, View} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 // import ProgressCircle from 'react-native-progress/Circle';
 import RNTextDetector from 'react-native-text-detector';
+import {useIsFocused} from '@react-navigation/native';
+import ItemFromList from './ItemFromList';
 
 const DEFAULT_HEIGHT = 500;
 const DEFAULT_WITH = 600;
 const defaultPickerOptions = {
-  cropping: true,
+  cropping: false,
   height: DEFAULT_HEIGHT,
   width: DEFAULT_WITH,
 };
@@ -15,14 +17,18 @@ const defaultPickerOptions = {
 function TestScanner() {
   const [isLoading, setIsLoading] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
-  //const [text, setText] = useState('');
   const [price, setPrice] = useState(0);
   const [error, setError] = useState('');
   const [firstProduct, setFirstProduct] = useState(true);
 
   const [countProduct, setCountProduct] = useState(0);
+  const [countProductFromStorage, setCountProductFromStorage] = useState();
 
   const [listOfProduct, setListOfProduct] = useState([]);
+  const [listOfProductFromStorage, setListOfProductFromStorage] = useState([]);
+
+  const [priceFromStorage, setPriceFromStorage] = useState('');
+  const isFocused = useIsFocused();
 
   const recognizeTextFromImage = async (path) => {
     setIsLoading(true);
@@ -34,27 +40,27 @@ function TestScanner() {
         setError('Błąd podczas skanowania, spróbuj jeszcze raz skanując cene.');
         setIsLoading(false);
       } else {
-        //setText(visionResp[0].text);
+        console.log(`${visionResp[0].text}-pt`);
         let text = visionResp[0].text;
-        console.log(`${typeof text} - typeof text`);
-        console.log(`${text} - text`);
         let number = parseInt(text, 10);
-        console.log(`${number} - number`);
         setIsLoading(false);
-        //let isNanValue = isNaN(number);
         if (isNaN(number) === true) {
           setError('Spróbuj zeskanować liczbę zamiast tekstu!');
         } else {
           setFirstProduct(false);
           setError('');
-          //setListOfProduct(listOfProduct.concat(text));
-          //console.log(`${JSON.stringify(listOfProduct)} - listOfProduct`);
-          let newProduct = {id: countProduct, value: text};
-          //let newElement = [...listOfProduct, newProduct];
+
+          let newProduct = {id: countProduct, value: text, quantity: 1};
           setListOfProduct([...listOfProduct, newProduct]);
-          console.log(`${JSON.stringify(listOfProduct)} - listOfProduct`);
+          let mirrorListOfProduct = [...listOfProduct, newProduct];
+
           setCountProduct(countProduct + 1);
+          let mirrorCountOfProduct = countProduct + 1;
+
           setPrice(price + number);
+          let mirrorPrice = price + number;
+
+          _storeData(mirrorPrice, mirrorListOfProduct, mirrorCountOfProduct);
         }
 
         console.log(`${visionResp[0].text} - tekst`);
@@ -89,15 +95,68 @@ function TestScanner() {
     }
   };
 
-  // useEffect(() => {
+  const _storeData = async (priceStorage, listStorage, countStorage) => {
+    try {
+      await AsyncStorage.setItem('finalPrice', priceStorage.toString());
+    } catch (err) {
+      // Error saving data
+    }
+    try {
+      await AsyncStorage.setItem('listOfProduct', JSON.stringify(listStorage));
+    } catch (err) {
+      // Error saving data
+    }
+    try {
+      await AsyncStorage.setItem('countOfProduct', countStorage.toString());
+    } catch (err) {
+      // Error saving data
+    }
+    _retrieveData();
+  };
 
-  // }
+  const _retrieveData = async () => {
+    try {
+      const value1 = await AsyncStorage.getItem('finalPrice');
+      if (value1 !== null) {
+        setPriceFromStorage(value1);
+        setPrice(parseInt(value1, 10));
+      }
+    } catch (err) {
+      // Error retrieving data
+    }
+    try {
+      const value2 = await AsyncStorage.getItem('listOfProduct');
+      console.log(value2);
+      if (value2 !== null) {
+        setListOfProductFromStorage(JSON.parse(value2));
+        setListOfProduct(JSON.parse(value2));
+      }
+    } catch (err) {
+      // Error retrieving data
+    }
+    try {
+      const value3 = await AsyncStorage.getItem('countOfProduct');
+      console.log(value3);
+      if (value3 !== null) {
+        setCountProductFromStorage(value3);
+        setCountProduct(parseInt(value3, 10));
+      }
+    } catch (err) {
+      // Error retrieving data
+    }
+  };
 
-  const listOfProductMap = listOfProduct.map((product) => (
-    <Text key={product.id}>
-      {`Produkt${product.id}:  `}
-      {product.value}
-    </Text>
+  useEffect(() => {
+    _retrieveData();
+  }, [isFocused]);
+
+  const listOfProductMap = listOfProductFromStorage.map((product) => (
+    <ItemFromList
+      product={product}
+      listOfProductFromStorage={listOfProductFromStorage}
+      priceFromStorage={priceFromStorage}
+      _retrieveData={_retrieveData}
+    />
   ));
 
   return (
@@ -130,18 +189,18 @@ function TestScanner() {
           />
         </View>
       </View>
-      {imgSrc && (
-        <View style={styles.imageContainer}>
-          {/* <Image style={styles.image} source={imgSrc} /> */}
-          {isLoading ? (
-            <Text>Ładowanie, proszę czekać</Text>
-          ) : (
-            <View>
-              <Text>{`Łączna cena: ${price}`}</Text>
-            </View>
-          )}
-        </View>
-      )}
+
+      <View style={styles.imageContainer}>
+        {/* <Image style={styles.image} source={imgSrc} /> */}
+        {isLoading ? (
+          <Text>Ładowanie, proszę czekać</Text>
+        ) : (
+          <View>
+            <Text>{`Łączna cena: ${priceFromStorage}`}</Text>
+          </View>
+        )}
+      </View>
+
       <View>{listOfProductMap}</View>
     </View>
   );

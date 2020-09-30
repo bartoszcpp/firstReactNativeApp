@@ -1,11 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import {AsyncStorage, View, Button, Text} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
 
 const HomeScreen = ({navigation}) => {
   const [textFromStorage, setTextFromStorage] = useState('');
+  const isFocused = useIsFocused();
+
+  const _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('name');
+      if (value !== null) {
+        setTextFromStorage(value);
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
+
   useEffect(() => {
-    setTextFromStorage(JSON.stringify(AsyncStorage.getItem('name')));
-  }, []);
+    _retrieveData();
+  }, [isFocused]);
   return (
     <View>
       <Button
