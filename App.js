@@ -6,6 +6,7 @@ import TestStorage from './components/TestStorage';
 import HomeScreen from './components/HomeScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import AllStorageContainer from './components/AllStorageContainer';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,10 @@ function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="TestScanner" component={TestScanner} />
         <Stack.Screen name="TestStorage" component={TestStorage} />
+        <Stack.Screen
+          name="AllStorageContainer"
+          component={AllStorageContainer}
+        />
       </Stack.Navigator>
       {/* <TestScanner /> */}
     </NavigationContainer>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {handleRemoveItemFromList} from '../functions';
@@ -12,20 +12,15 @@ const ItemFromList = (props) => {
     _retrieveData,
   } = props;
 
-  const [count, setCount] = useState(1);
-  const [action, setAction] = useState('');
-
-  useEffect(() => {
+  const handleChange = (count) => {
     handleChangeQuantity(
       product,
       listOfProductFromStorage,
       priceFromStorage,
       _retrieveData,
       count,
-      action,
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count]);
+  };
 
   return (
     <View>
@@ -45,14 +40,13 @@ const ItemFromList = (props) => {
           }>
           <Text style={styles.changeValueButton}> usuń</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={(() => setCount(count + 1), () => setAction('addition'))}>
+        <TouchableOpacity onPress={() => handleChange(1)}>
           <Text style={styles.changeValueButton}>+</Text>
         </TouchableOpacity>
-        <Text style={styles.changeValueButton}>{count}</Text>
+        <Text style={styles.changeValueButton}>{product.quantity}</Text>
         <TouchableOpacity
-          disabled={count === 0 ? true : false}
-          onPress={(() => setCount(count - 1), () => setAction('subtraction'))}>
+          disabled={product.quantity === 1 ? true : false}
+          onPress={() => handleChange(-1)}>
           <Text style={styles.changeValueButton}>-</Text>
         </TouchableOpacity>
       </View>
@@ -61,15 +55,8 @@ const ItemFromList = (props) => {
 };
 
 const styles = StyleSheet.create({
-  handleProduct: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  changeValueButton: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 15,
-  },
+  handleProduct: {},
+  changeValueButton: {},
 });
 
 export default ItemFromList;

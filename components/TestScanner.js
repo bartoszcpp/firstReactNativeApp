@@ -1,10 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {AsyncStorage, Button, StyleSheet, Text, View} from 'react-native';
+import {Button, StyleSheet, Text, View} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImagePicker from 'react-native-image-crop-picker';
 // import ProgressCircle from 'react-native-progress/Circle';
 import RNTextDetector from 'react-native-text-detector';
 import {useIsFocused} from '@react-navigation/native';
 import ItemFromList from './ItemFromList';
+import SaveData from './SaveData';
+import AllStorage from './AllStorage';
 
 const DEFAULT_HEIGHT = 500;
 const DEFAULT_WITH = 600;
@@ -26,6 +29,8 @@ function TestScanner() {
 
   const [listOfProduct, setListOfProduct] = useState([]);
   const [listOfProductFromStorage, setListOfProductFromStorage] = useState([]);
+
+  // const [allStorage, setAllStorage] = useState([]);
 
   const [priceFromStorage, setPriceFromStorage] = useState('');
   const isFocused = useIsFocused();
@@ -56,14 +61,13 @@ function TestScanner() {
 
           setCountProduct(countProduct + 1);
           let mirrorCountOfProduct = countProduct + 1;
+          console.log(countProduct);
 
           setPrice(price + number);
           let mirrorPrice = price + number;
 
           _storeData(mirrorPrice, mirrorListOfProduct, mirrorCountOfProduct);
         }
-
-        console.log(`${visionResp[0].text} - tekst`);
       }
     } catch (e) {
       console.warn(e);
@@ -86,7 +90,6 @@ function TestScanner() {
     try {
       const image = await ImagePicker.openCamera(options);
       setImgSrc({uri: image.path});
-      console.log(imgSrc);
       await recognizeTextFromImage(image.path);
     } catch (err) {
       if (err.message !== 'User cancelled image selection') {
@@ -115,11 +118,15 @@ function TestScanner() {
   };
 
   const _retrieveData = async () => {
+    console.log('Wyywywy');
     try {
       const value1 = await AsyncStorage.getItem('finalPrice');
       if (value1 !== null) {
         setPriceFromStorage(value1);
         setPrice(parseInt(value1, 10));
+      } else {
+        setPriceFromStorage('');
+        setPrice(0);
       }
     } catch (err) {
       // Error retrieving data
@@ -130,6 +137,9 @@ function TestScanner() {
       if (value2 !== null) {
         setListOfProductFromStorage(JSON.parse(value2));
         setListOfProduct(JSON.parse(value2));
+      } else {
+        setListOfProductFromStorage([]);
+        setListOfProduct([]);
       }
     } catch (err) {
       // Error retrieving data
@@ -144,20 +154,47 @@ function TestScanner() {
     } catch (err) {
       // Error retrieving data
     }
+    // try {
+    //   const value4 = await AsyncStorage.getItem('allDataProduct');
+    //   console.log(value4);
+    //   if (value4 !== null) {
+    //     setAllStorage(JSON.parse(value4));
+    //   }
+    // } catch (err) {
+    //   // Error retrieving data
+    // }
   };
 
   useEffect(() => {
     _retrieveData();
   }, [isFocused]);
-
+  console.log(listOfProductFromStorage);
+  console.log('ll');
   const listOfProductMap = listOfProductFromStorage.map((product) => (
     <ItemFromList
+      key={product.id}
       product={product}
       listOfProductFromStorage={listOfProductFromStorage}
       priceFromStorage={priceFromStorage}
       _retrieveData={_retrieveData}
     />
   ));
+  //product.product[0].id
+  //product.date
+  //product.product[0]
+  // if (allStorage.item !== undefined) {
+  //   var allStoragMap = allStorage.item.map((product) => {
+  //     return (
+  //       <AllStorage
+  //         key={product.product[0].id}
+  //         id={product.product[0].id}
+  //         date={product.date}
+  //         product={product.product}
+  //       />
+  //     );
+  //   });
+  //   //wyswietlanie wszystkich zakupow
+  // }
 
   return (
     <View style={styles.container}>
@@ -202,6 +239,13 @@ function TestScanner() {
       </View>
 
       <View>{listOfProductMap}</View>
+      {/* <View>{allStoragMap}</View> */}
+
+      {/* <View>{allStorageMap}</View> */}
+      <SaveData
+        listStorage={listOfProductFromStorage}
+        _retrieveData1={_retrieveData}
+      />
     </View>
   );
 }

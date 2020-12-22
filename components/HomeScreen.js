@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {AsyncStorage, View, Button, Text} from 'react-native';
+import {View, Button, Text} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
 
 const HomeScreen = ({navigation}) => {
@@ -17,8 +18,25 @@ const HomeScreen = ({navigation}) => {
     }
   };
 
+  // const _storeData111 = async () => {
+  //   try {
+  //     console.log('ssss');
+  //     await AsyncStorage.setItem('listOfProduct', '');
+  //   } catch (err) {
+  //     // Error saving data
+  //   }
+  //   try {
+  //     await AsyncStorage.setItem('finalPrice', '');
+  //   } catch (err) {
+  //     // Error saving data
+  //   }
+  //   _retrieveData();
+  // };
+
   useEffect(() => {
     _retrieveData();
+    // _storeData111();
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
   return (
     <View>
@@ -29,6 +47,10 @@ const HomeScreen = ({navigation}) => {
       <Button
         title="Test storage"
         onPress={() => navigation.navigate('TestStorage')}
+      />
+      <Button
+        title="All storage"
+        onPress={() => navigation.navigate('AllStorageContainer')}
       />
       <Text>{textFromStorage}</Text>
     </View>
