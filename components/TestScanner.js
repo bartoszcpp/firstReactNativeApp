@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import {Button, StyleSheet, Text, View, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImagePicker from 'react-native-image-crop-picker';
 // import ProgressCircle from 'react-native-progress/Circle';
@@ -7,7 +7,6 @@ import RNTextDetector from 'react-native-text-detector';
 import {useIsFocused} from '@react-navigation/native';
 import ItemFromList from './ItemFromList';
 import SaveData from './SaveData';
-import AllStorage from './AllStorage';
 
 const DEFAULT_HEIGHT = 500;
 const DEFAULT_WITH = 600;
@@ -30,8 +29,6 @@ function TestScanner() {
   const [listOfProduct, setListOfProduct] = useState([]);
   const [listOfProductFromStorage, setListOfProductFromStorage] = useState([]);
 
-  // const [allStorage, setAllStorage] = useState([]);
-
   const [priceFromStorage, setPriceFromStorage] = useState('');
   const isFocused = useIsFocused();
 
@@ -45,7 +42,6 @@ function TestScanner() {
         setError('Błąd podczas skanowania, spróbuj jeszcze raz skanując cene.');
         setIsLoading(false);
       } else {
-        console.log(`${visionResp[0].text}-pt`);
         let text = visionResp[0].text;
         let number = parseInt(text, 10);
         setIsLoading(false);
@@ -61,7 +57,6 @@ function TestScanner() {
 
           setCountProduct(countProduct + 1);
           let mirrorCountOfProduct = countProduct + 1;
-          console.log(countProduct);
 
           setPrice(price + number);
           let mirrorPrice = price + number;
@@ -118,7 +113,6 @@ function TestScanner() {
   };
 
   const _retrieveData = async () => {
-    console.log('Wyywywy');
     try {
       const value1 = await AsyncStorage.getItem('finalPrice');
       if (value1 !== null) {
@@ -133,7 +127,6 @@ function TestScanner() {
     }
     try {
       const value2 = await AsyncStorage.getItem('listOfProduct');
-      console.log(value2);
       if (value2 !== null) {
         setListOfProductFromStorage(JSON.parse(value2));
         setListOfProduct(JSON.parse(value2));
@@ -146,7 +139,6 @@ function TestScanner() {
     }
     try {
       const value3 = await AsyncStorage.getItem('countOfProduct');
-      console.log(value3);
       if (value3 !== null) {
         setCountProductFromStorage(value3);
         setCountProduct(parseInt(value3, 10));
@@ -154,22 +146,11 @@ function TestScanner() {
     } catch (err) {
       // Error retrieving data
     }
-    // try {
-    //   const value4 = await AsyncStorage.getItem('allDataProduct');
-    //   console.log(value4);
-    //   if (value4 !== null) {
-    //     setAllStorage(JSON.parse(value4));
-    //   }
-    // } catch (err) {
-    //   // Error retrieving data
-    // }
   };
 
   useEffect(() => {
     _retrieveData();
   }, [isFocused]);
-  console.log(listOfProductFromStorage);
-  console.log('ll');
   const listOfProductMap = listOfProductFromStorage.map((product) => (
     <ItemFromList
       key={product.id}
@@ -179,30 +160,14 @@ function TestScanner() {
       _retrieveData={_retrieveData}
     />
   ));
-  //product.product[0].id
-  //product.date
-  //product.product[0]
-  // if (allStorage.item !== undefined) {
-  //   var allStoragMap = allStorage.item.map((product) => {
-  //     return (
-  //       <AllStorage
-  //         key={product.product[0].id}
-  //         id={product.product[0].id}
-  //         date={product.date}
-  //         product={product.product}
-  //       />
-  //     );
-  //   });
-  //   //wyswietlanie wszystkich zakupow
-  // }
 
   return (
     <View style={styles.container}>
       <View style={styles.instructions}>
         {firstProduct === true ? (
-          <Text>Dodaj pierwszy produkt</Text>
+          <Text style={styles.titleText}>Dodaj pierwszy produkt</Text>
         ) : (
-          <Text>Dodaj kolejny produkt</Text>
+          <Text style={styles.titleText}>Dodaj kolejny produkt</Text>
         )}
       </View>
       <Text>{error}</Text>
@@ -210,19 +175,11 @@ function TestScanner() {
         <View style={styles.button}>
           <Button
             disabled={isLoading}
-            title="Aparat"
+            title="Skanuj"
             onPress={() => {
               recognizeFromCamera();
             }}
-          />
-        </View>
-        <View style={styles.button}>
-          <Button
-            disabled={isLoading}
-            title="Galeria"
-            onPress={() => {
-              recognizeFromPicker();
-            }}
+            color="transparent"
           />
         </View>
       </View>
@@ -233,15 +190,15 @@ function TestScanner() {
           <Text>Ładowanie, proszę czekać</Text>
         ) : (
           <View>
-            <Text>{`Łączna cena: ${priceFromStorage}`}</Text>
+            <Text
+              style={
+                styles.imageContainer__price
+              }>{`Łączna cena: ${priceFromStorage}`}</Text>
           </View>
         )}
       </View>
 
-      <View>{listOfProductMap}</View>
-      {/* <View>{allStoragMap}</View> */}
-
-      {/* <View>{allStorageMap}</View> */}
+      <ScrollView style={styles.list}>{listOfProductMap}</ScrollView>
       <SaveData
         listStorage={listOfProductFromStorage}
         _retrieveData1={_retrieveData}
@@ -252,10 +209,11 @@ function TestScanner() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+    height: '100%',
+    paddingTop: 30,
   },
   options: {
     flexDirection: 'row',
@@ -264,10 +222,18 @@ const styles = StyleSheet.create({
   },
   button: {
     marginHorizontal: 10,
+    marginBottom: 20,
+    backgroundColor: '#01a792',
+  },
+  titleText: {
+    fontSize: 22,
   },
   imageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  imageContainer__price: {
+    fontSize: 28,
   },
   image: {
     marginVertical: 15,
@@ -283,6 +249,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  list: {
+    height: DEFAULT_HEIGHT / 2.5,
   },
 });
 

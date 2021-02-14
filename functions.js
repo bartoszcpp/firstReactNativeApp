@@ -57,7 +57,6 @@ export const handleChangeQuantity = (
 };
 
 const _storeData111 = async (_retrieveData1) => {
-  console.log('tutaj');
   try {
     await AsyncStorage.setItem('listOfProduct', '');
   } catch (err) {

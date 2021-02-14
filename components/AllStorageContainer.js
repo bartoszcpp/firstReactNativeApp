@@ -1,14 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import AllStorage from './AllStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  Button,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  SafeAreaView,
-} from 'react-native';
+import {StyleSheet, ScrollView, SafeAreaView} from 'react-native';
 
 const AllStorageContainer = () => {
   const [allStorage, setAllStorage] = useState([]);
@@ -16,10 +9,8 @@ const AllStorageContainer = () => {
   const _retrieveData = async () => {
     try {
       const value4 = await AsyncStorage.getItem('allDataProduct');
-      console.log(value4);
       if (value4 !== null) {
         setAllStorage(JSON.parse(value4));
-        console.log(JSON.parse(value4) + 'llll');
       }
     } catch (err) {
       // Error retrieving data
@@ -41,7 +32,6 @@ const AllStorageContainer = () => {
         />
       );
     });
-    //wyswietlanie wszystkich zakupow
   }
 
   return (
@@ -57,7 +47,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   scrollView: {
-    backgroundColor: 'pink',
     marginHorizontal: 20,
   },
   text: {

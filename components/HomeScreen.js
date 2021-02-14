@@ -1,60 +1,42 @@
-import React, {useEffect, useState} from 'react';
-import {View, Button, Text} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useIsFocused} from '@react-navigation/native';
+import React from 'react';
+import {View, Button, StyleSheet} from 'react-native';
 
 const HomeScreen = ({navigation}) => {
-  const [textFromStorage, setTextFromStorage] = useState('');
-  const isFocused = useIsFocused();
-
-  const _retrieveData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('name');
-      if (value !== null) {
-        setTextFromStorage(value);
-      }
-    } catch (error) {
-      // Error retrieving data
-    }
-  };
-
-  // const _storeData111 = async () => {
-  //   try {
-  //     console.log('ssss');
-  //     await AsyncStorage.setItem('listOfProduct', '');
-  //   } catch (err) {
-  //     // Error saving data
-  //   }
-  //   try {
-  //     await AsyncStorage.setItem('finalPrice', '');
-  //   } catch (err) {
-  //     // Error saving data
-  //   }
-  //   _retrieveData();
-  // };
-
-  useEffect(() => {
-    _retrieveData();
-    // _storeData111();
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFocused]);
   return (
-    <View>
-      <Button
-        title="Test skaner"
-        onPress={() => navigation.navigate('TestScanner')}
-      />
-      <Button
-        title="Test storage"
-        onPress={() => navigation.navigate('TestStorage')}
-      />
-      <Button
-        title="All storage"
-        onPress={() => navigation.navigate('AllStorageContainer')}
-      />
-      <Text>{textFromStorage}</Text>
+    <View style={styles.container}>
+      <View style={styles.button}>
+        <Button
+          title="Skanuj produkt"
+          onPress={() => navigation.navigate('TestScanner')}
+          color="transparent"
+        />
+      </View>
+      <View style={styles.button}>
+        <Button
+          title="Wyświetl historie zakupów"
+          onPress={() => navigation.navigate('AllStorageContainer')}
+          color="transparent"
+        />
+      </View>
+      <View style={styles.button}>
+        <Button
+          title="Informacje o aplikacji"
+          onPress={() => navigation.navigate('AboutApp')}
+          color="transparent"
+        />
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {},
+  button: {
+    backgroundColor: '#01a792',
+    borderColor: '#01a792',
+    borderWidth: 0,
+    margin: 30,
+  },
+});
 
 export default HomeScreen;

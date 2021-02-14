@@ -29,6 +29,22 @@ const ItemFromList = (props) => {
         {product.value}
       </Text>
       <View style={styles.handleProduct}>
+        <View style={styles.container}>
+          <TouchableOpacity
+            onPress={() => handleChange(1)}
+            style={styles.removeButton}>
+            <Text style={styles.changeValueButton}>+</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.removeButton}>
+            <Text style={styles.changeValueButton}>{product.quantity}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            disabled={product.quantity === 1 ? true : false}
+            onPress={() => handleChange(-1)}
+            style={styles.removeButton}>
+            <Text style={styles.changeValueButton}>-</Text>
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
           onPress={() =>
             handleRemoveItemFromList(
@@ -37,17 +53,9 @@ const ItemFromList = (props) => {
               priceFromStorage,
               _retrieveData,
             )
-          }>
+          }
+          style={styles.removeButton}>
           <Text style={styles.changeValueButton}> usuń</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleChange(1)}>
-          <Text style={styles.changeValueButton}>+</Text>
-        </TouchableOpacity>
-        <Text style={styles.changeValueButton}>{product.quantity}</Text>
-        <TouchableOpacity
-          disabled={product.quantity === 1 ? true : false}
-          onPress={() => handleChange(-1)}>
-          <Text style={styles.changeValueButton}>-</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -56,7 +64,22 @@ const ItemFromList = (props) => {
 
 const styles = StyleSheet.create({
   handleProduct: {},
-  changeValueButton: {},
+  changeValueButton: {
+    display: 'flex',
+    textAlign: 'center',
+    color: 'white',
+  },
+  removeButton: {
+    backgroundColor: '#01a792',
+    borderColor: '#01a792',
+    borderWidth: 0,
+    padding: 20,
+    margin: 5,
+  },
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+  },
 });
 
 export default ItemFromList;
