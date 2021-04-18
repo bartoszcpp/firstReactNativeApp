@@ -7,8 +7,8 @@ const AllStorage = (props) => {
   const listOfProduct = product.map((item) => (
     <View style={styles.product} key={item.id}>
       <Text style={styles.text}>{`Produkt${item.id}:  `}</Text>
-      <Text style={styles.text}>Quantity: {item.quantity}</Text>
-      <Text style={styles.text}>Value: {item.value}</Text>
+      <Text style={styles.text}>Ilość: {item.quantity}</Text>
+      <Text style={styles.text}>Wartość: {item.value}</Text>
     </View>
   ));
 
