@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Button, StyleSheet, Text, View, ScrollView} from 'react-native';
+import {TextInput} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImagePicker from 'react-native-image-crop-picker';
 // import ProgressCircle from 'react-native-progress/Circle';
@@ -31,6 +33,7 @@ function TestScanner() {
 
   const [priceFromStorage, setPriceFromStorage] = useState('');
   const isFocused = useIsFocused();
+  const [nameOfProduct, setNameOfProduct] = useState('');
 
   const recognizeTextFromImage = async (path) => {
     setIsLoading(true);
@@ -51,7 +54,12 @@ function TestScanner() {
           setFirstProduct(false);
           setError('');
 
-          let newProduct = {id: countProduct, value: text, quantity: 1};
+          let newProduct = {
+            id: countProduct,
+            value: text,
+            quantity: 1,
+            name: nameOfProduct,
+          };
           setListOfProduct([...listOfProduct, newProduct]);
           let mirrorListOfProduct = [...listOfProduct, newProduct];
 
@@ -151,6 +159,7 @@ function TestScanner() {
   useEffect(() => {
     _retrieveData();
   }, [isFocused]);
+
   const listOfProductMap = listOfProductFromStorage.map((product) => (
     <ItemFromList
       key={product.id}
@@ -198,6 +207,19 @@ function TestScanner() {
         )}
       </View>
 
+      <View style={styles.inputContainer}>
+        <TextInput
+          multiline={true}
+          numberOfLines={4}
+          style={styles.input}
+          // eslint-disable-next-line no-shadow
+          onChangeText={(text) => setNameOfProduct(text)}
+          value={nameOfProduct}
+        />
+
+        <Text> Podaj nazwę produktu </Text>
+      </View>
+
       <ScrollView style={styles.list}>{listOfProductMap}</ScrollView>
       <SaveData
         listStorage={listOfProductFromStorage}
@@ -222,7 +244,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginHorizontal: 10,
-    marginBottom: 20,
+    marginBottom: 5,
     backgroundColor: '#01a792',
   },
   titleText: {
@@ -252,6 +274,13 @@ const styles = StyleSheet.create({
   },
   list: {
     height: DEFAULT_HEIGHT / 2.5,
+  },
+  input: {
+    borderBottomColor: '#01a792',
+    borderBottomWidth: 2,
+  },
+  inputContainer: {
+    marginBottom: 10,
   },
 });
 

@@ -25,8 +25,8 @@ const ItemFromList = (props) => {
   return (
     <View>
       <Text key={product.id}>
-        {`Produkt${product.id}:  `}
-        {product.value}
+        {`${product.name}:  `}
+        {product.value} zł
       </Text>
       <View style={styles.handleProduct}>
         <View style={styles.container}>
